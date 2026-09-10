@@ -1,0 +1,106 @@
+:root {
+    color-scheme: light dark;
+    --border: #c7c7c7;
+    --accent: #1f5f8b;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 1.5rem;
+    font: 15px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    max-width: 900px;
+    margin-inline: auto;
+}
+
+header h1 {
+    margin-bottom: 0.25rem;
+}
+
+.hint {
+    color: #666;
+    font-size: 0.9em;
+    margin-top: 0;
+}
+
+form {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+}
+
+button {
+    padding: 0.4rem 0.9rem;
+    border: 1px solid var(--accent);
+    background: var(--accent);
+    color: #fff;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+button:hover {
+    filter: brightness(1.1);
+}
+
+#incident-list {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    gap: 0.5rem;
+}
+
+#incident-list li {
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 0.6rem 0.8rem;
+    cursor: pointer;
+}
+
+#incident-list li:hover {
+    border-color: var(--accent);
+}
+
+.incident-card-title {
+    font-weight: 600;
+}
+
+.incident-card-meta {
+    color: #666;
+    font-size: 0.88em;
+}
+
+#incident-details {
+    margin-top: 2rem;
+    border-top: 2px solid var(--border);
+    padding-top: 1rem;
+}
+
+dl {
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    gap: 0.3rem 1rem;
+}
+
+dt {
+    font-weight: 600;
+}
+
+dd {
+    margin: 0;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+#details-comments {
+    padding-left: 1.2rem;
+}
+
+[role="status"] {
+    color: #666;
+    min-height: 1.2em;
+}

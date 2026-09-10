@@ -1,0 +1,23 @@
+name: securelab
+
+services:
+  postgres:
+    image: postgres:17-alpine
+    container_name: securelab-postgres
+    environment:
+      POSTGRES_DB: securelab
+      POSTGRES_USER: securelab
+      # Відкритий навчальний пароль лише для стенда на 127.0.0.1.
+      POSTGRES_PASSWORD: local-study-password
+    ports:
+      - "127.0.0.1:${POSTGRES_PORT:-54329}:5432"
+    volumes:
+      - securelab-pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U securelab -d securelab"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+
+volumes:
+  securelab-pgdata:

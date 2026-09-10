@@ -1,0 +1,49 @@
+@baseUrl = http://localhost:5080
+
+### T-01. Readiness: API бачить PostgreSQL
+GET {{baseUrl}}/health
+Accept: application/json
+
+### T-02. Список інцидентів + seed-дані
+GET {{baseUrl}}/api/incidents
+Accept: application/json
+
+### Готовий фільтр за статусом (list-flow)
+GET {{baseUrl}}/api/incidents?status=Triaged
+Accept: application/json
+
+### T-03. Порожній, але коректний результат: [] у початковому seed
+GET {{baseUrl}}/api/incidents?status=Resolved
+Accept: application/json
+
+### T-05. Некоректний параметр перевіряє сервер -> 400 Validation Problem Details
+GET {{baseUrl}}/api/incidents?status=Unknown
+Accept: application/json
+
+### Успішна гілка details для готової операції
+GET {{baseUrl}}/api/incidents/20000000-0000-0000-0000-000000000003
+Accept: application/json
+
+### T-04. Відсутній ресурс не маскується під успіх -> 404 Problem Details
+GET {{baseUrl}}/api/incidents/99999999-9999-9999-9999-999999999999
+Accept: application/json
+
+### Гілка відсутнього ресурсу для іншого синтаксично коректного UUID
+GET {{baseUrl}}/api/incidents/aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa
+Accept: application/json
+
+### T-06. Точка розширення severity-summary
+# BASELINE-очікування: 501 Not Implemented.
+# ПІСЛЯ ЕТАПУ 3: 200 OK, JSON-масив { severity, count }.
+# Політика нульових груп: повний перелік рівнів (Critical з count: 0 на baseline seed).
+# Порядок: явний порядок критичності Low, Medium, High, Critical.
+GET {{baseUrl}}/api/incidents/severity-summary
+Accept: application/json
+
+### Добрий рівень: severity-summary з фільтром за статусом (allowlist)
+GET {{baseUrl}}/api/incidents/severity-summary?status=New
+Accept: application/json
+
+### Добрий рівень: некоректний status для summary -> 400 Validation Problem Details
+GET {{baseUrl}}/api/incidents/severity-summary?status=Bogus
+Accept: application/json

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>SecureLab — трекер інцидентів</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>SecureLab — трекер інцидентів</h1>
+        <p class="hint">Навчальний стенд baseline 2-A. Дані локальні, лише для 127.0.0.1.</p>
+    </header>
+
+    <main>
+        <section aria-labelledby="filter-heading">
+            <h2 id="filter-heading">Список інцидентів</h2>
+            <form id="filter-form">
+                <label for="status-filter">Статус</label>
+                <select id="status-filter" name="status">
+                    <option value="">Усі</option>
+                    <option value="New">New</option>
+                    <option value="Triaged">Triaged</option>
+                    <option value="InProgress">InProgress</option>
+                    <option value="Resolved">Resolved</option>
+                    <option value="Closed">Closed</option>
+                </select>
+                <button type="submit">Застосувати</button>
+            </form>
+
+            <p id="list-status" role="status"></p>
+            <ul id="incident-list"></ul>
+        </section>
+
+        <section id="incident-details" aria-labelledby="details-heading" hidden>
+            <h2 id="details-heading">Деталі інциденту</h2>
+            <p id="details-status" role="status"></p>
+            <dl id="details-body"></dl>
+            <h3>Коментарі</h3>
+            <ul id="details-comments"></ul>
+        </section>
+    </main>
+
+    <script src="app.js" defer></script>
+</body>
+</html>
