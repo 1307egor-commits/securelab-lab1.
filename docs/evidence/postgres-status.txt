@@ -1,0 +1,9 @@
+# Стан навчального PostgreSQL (портативний, замість docker compose ps)
+pg_ctl: server is running (PID: 5812)
+C:/Users/Admin/pgsql-portable/pgsql/bin/postgres.exe "-D" "C:/Users/Admin/pgsql-portable/data" "-p" "54329" "-c" "listen_addresses=127.0.0.1"
+
+    db     |   role    |   host    | port  |                                 version                                 
+-----------+-----------+-----------+-------+-------------------------------------------------------------------------
+ securelab | securelab | 127.0.0.1 | 54329 | PostgreSQL 17.6 on x86_64-windows, compiled by msvc-19.44.35213, 64-bit
+(1 row)
+
