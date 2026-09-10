@@ -56,6 +56,62 @@ public sealed class IncidentEndpointTests : IClassFixture<SecureLabApiFactory>
     }
 
     [Fact]
+    public async Task GetSeveritySummary_ReturnsAllLevelsInCriticalityOrder_WithBaselineSeedCounts()
+    {
+        var client = _factory.CreateClient();
+
+        var summary = await client.GetFromJsonAsync<List<SeverityRow>>("/api/incidents/severity-summary");
+
+        Assert.NotNull(summary);
+
+        // Політика повного переліку рівнів + явний порядок критичності.
+        Assert.Equal(new[] { "Low", "Medium", "High", "Critical" }, summary!.Select(r => r.Severity));
+
+        // Baseline seed: по одному Low / Medium / High, Critical відсутній -> 0.
+        Assert.Equal(1, summary.Single(r => r.Severity == "Low").Count);
+        Assert.Equal(1, summary.Single(r => r.Severity == "Medium").Count);
+        Assert.Equal(1, summary.Single(r => r.Severity == "High").Count);
+        Assert.Equal(0, summary.Single(r => r.Severity == "Critical").Count);
+    }
+
+    [Fact]
+    public async Task GetSeveritySummary_WithStatusFilter_CountsOnlyMatchingIncidents()
+    {
+        var client = _factory.CreateClient();
+
+        var summary = await client.GetFromJsonAsync<List<SeverityRow>>("/api/incidents/severity-summary?status=New");
+
+        Assert.NotNull(summary);
+        // Seed зі статусом New: portScan (High) і classLog (Low).
+        Assert.Equal(1, summary!.Single(r => r.Severity == "Low").Count);
+        Assert.Equal(0, summary.Single(r => r.Severity == "Medium").Count);
+        Assert.Equal(1, summary.Single(r => r.Severity == "High").Count);
+        Assert.Equal(0, summary.Single(r => r.Severity == "Critical").Count);
+    }
+
+    [Fact]
+    public async Task GetSeveritySummary_UnknownStatus_ReturnsValidationProblem400()
+    {
+        var client = _factory.CreateClient();
+
+        var response = await client.GetAsync("/api/incidents/severity-summary?status=Bogus");
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        Assert.Equal("application/problem+json", response.Content.Headers.ContentType?.MediaType);
+    }
+
+    [Fact]
+    public async Task GetSeveritySummary_IsNoLongerBaseline501()
+    {
+        var client = _factory.CreateClient();
+
+        var response = await client.GetAsync("/api/incidents/severity-summary");
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.NotEqual(HttpStatusCode.NotImplemented, response.StatusCode);
+    }
+
+    [Fact]
     public void ClientScript_DoesNotUseDangerousInnerHtmlSink()
     {
         var appJs = File.ReadAllText(ClientAssets.AppJsPath());
@@ -68,6 +124,9 @@ public sealed class IncidentEndpointTests : IClassFixture<SecureLabApiFactory>
         Assert.DoesNotContain("document.write", appJs, StringComparison.OrdinalIgnoreCase);
     }
 }
+
+/// <summary>Форма елемента підсумку за severity для десеріалізації в тестах.</summary>
+internal sealed record SeverityRow(string Severity, int Count);
 
 /// <summary>Пошук клієнтських файлів від каталогу збірки вгору до кореня репозиторію.</summary>
 internal static class ClientAssets

@@ -32,3 +32,13 @@ public sealed record IncidentCommentResponse(
     string AuthorDisplayName,
     string Body,
     DateTimeOffset CreatedAtUtc);
+
+/// <summary>
+/// Один елемент підсумку інцидентів за рівнем критичності. Це агрегат, а не
+/// entity: лише пара severity + count. Порядок елементів у відповіді —
+/// явний порядок критичності (Low, Medium, High, Critical), задокументований
+/// у контракті, а не лексикографічний порядок SQL.
+/// </summary>
+public sealed record IncidentSeveritySummaryResponse(
+    string Severity,
+    int Count);

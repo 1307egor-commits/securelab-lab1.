@@ -14,6 +14,10 @@ const detailsStatusEl = document.querySelector("#details-status");
 const detailsBodyEl = document.querySelector("#details-body");
 const detailsCommentsEl = document.querySelector("#details-comments");
 
+const severitySummaryButtonEl = document.querySelector("#load-severity-summary");
+const severitySummaryStatusEl = document.querySelector("#severity-summary-status");
+const severitySummaryListEl = document.querySelector("#severity-summary-list");
+
 /**
  * Обгортка над fetch. Повертає розібраний JSON для 2xx або кидає помилку
  * з кодом стану. Читання відповіді та читання тіла — дві окремі дії.
@@ -136,9 +140,43 @@ function formatDate(value) {
     return Number.isNaN(date.getTime()) ? String(value) : date.toISOString().replace("T", " ").slice(0, 16);
 }
 
+/**
+ * GET /api/incidents/severity-summary і безпечний показ результату.
+ * Окремі стани: завантаження -> (порожньо | успіх) | безпечна помилка.
+ */
+async function loadSeveritySummary() {
+    severitySummaryStatusEl.textContent = "Завантаження…";
+    severitySummaryListEl.replaceChildren();
+
+    try {
+        const summary = await apiFetch("/api/incidents/severity-summary");
+
+        if (!Array.isArray(summary) || summary.length === 0) {
+            severitySummaryStatusEl.textContent = "Даних немає.";
+            return;
+        }
+
+        const fragment = document.createDocumentFragment();
+        for (const row of summary) {
+            const item = document.createElement("li");
+            // Лише текст: жодного перетворення даних API на розмітку.
+            item.textContent = `${row.severity}: ${row.count}`;
+            fragment.append(item);
+        }
+        severitySummaryListEl.replaceChildren(fragment);
+        severitySummaryStatusEl.textContent = "";
+    } catch (error) {
+        // Коротке фіксоване повідомлення без stack trace, SQL чи внутрішніх деталей.
+        severitySummaryStatusEl.textContent = "Не вдалося завантажити підсумок.";
+    }
+}
+
 filterForm.addEventListener("submit", (event) => {
     event.preventDefault();
     loadIncidents(statusFilterEl.value);
 });
 
+severitySummaryButtonEl.addEventListener("click", () => loadSeveritySummary());
+
 loadIncidents("");
+loadSeveritySummary();

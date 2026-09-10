@@ -48,10 +48,26 @@
 - [x] `scripts/test.sh`
 - [x] `dotnet build` — **успішно, 0 помилок, 0 попереджень**
 - [x] Git-коміт baseline на `main`, тег `starter-v0.1.0`, гілка `lab/1-system`, push
+- [x] **Етап 3 — код написано** на гілці `lab/1-system` (build проходить, тести ще не ганяли):
+  - `IncidentSeveritySummaryResponse(string Severity, int Count)` у Contracts
+  - `IncidentQueries.GetSeveritySummaryAsync(IncidentStatus?, CancellationToken)` — AsNoTracking, GroupBy,
+    Count, ToListAsync, повний перелік рівнів, порядок Low/Medium/High/Critical, структурований LogInformation
+  - `IncidentEndpoints` — робочий `GET /api/incidents/severity-summary` з `?status=` allowlist (400 для іншого),
+    `.Produces<IReadOnlyList<IncidentSeveritySummaryResponse>>()`, прибрано 501
+  - `Client/index.html` + `app.js` — кнопка `#load-severity-summary`, `loadSeveritySummary()` зі станами
+    завантаження / «Даних немає» / безпечна помилка, вивід через `textContent`
+  - `IncidentEndpointTests` — 4 нові тести severity-summary (порядок+лічильники, фільтр `?status=New`,
+    400 для `?status=Bogus`, «більше не 501»)
+
+### БЛОКЕР: віртуалізація
+BIOS SVM — увімкнено ✅. Компоненти Windows `VirtualMachinePlatform` + `Microsoft-Windows-Subsystem-Linux`
+— увімкнено через DISM (elevated) ✅, але **потрібне ще одне перезавантаження**, щоб вони активувались.
+Після ребуту: `wsl --update` (за потреби), тоді Docker Desktop підхопить WSL2-бекенд.
 
 ## Далі (у цьому порядку)
 
-1. **Підняти PostgreSQL** (за рішенням користувача).
+0. Перезавантажити ПК. Після ребуту: `wsl --update`; перевірити `docker info`.
+1. **Підняти PostgreSQL**: `docker compose --env-file infra/.env.example -f infra/compose.yaml up -d --wait`
 2. `dotnet run --project src/SecureLab.Api` → перевірити `/health`, `/`, `/scalar/v1`,
    `GET /api/incidents`, фільтри, `/{id}`, 404, 400, і `severity-summary` → **501** (доказ «до»).
    Зберегти скриншоти/записи HTTP-обміну.
