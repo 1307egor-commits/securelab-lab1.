@@ -178,5 +178,15 @@ filterForm.addEventListener("submit", (event) => {
 
 severitySummaryButtonEl.addEventListener("click", () => loadSeveritySummary());
 
+// Необов'язкове глибоке посилання: #/incident/<id> одразу відкриває деталі.
+function openFromHash() {
+    const match = /^#\/incident\/([0-9a-fA-F-]{36})$/.exec(location.hash);
+    if (match) {
+        loadIncidentDetails(match[1]);
+    }
+}
+window.addEventListener("hashchange", openFromHash);
+
 loadIncidents("");
 loadSeveritySummary();
+openFromHash();
