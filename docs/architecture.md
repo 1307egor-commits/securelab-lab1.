@@ -9,7 +9,7 @@
 | Browser client | Одна HTML-сторінка + Vanilla JS, без фреймворків | `src/SecureLab.Api/Client/` |
 | ASP.NET Core Web API | Minimal API, .NET 10, Kestrel на `http://localhost:5080` | `src/SecureLab.Api/` |
 | EF Core | ORM, провайдер Npgsql; одна міграція `InitialCreate` | `src/SecureLab.Api/Data/` |
-| PostgreSQL | Локальна БД `securelab` на `127.0.0.1:54329` | штатно `infra/compose.yaml`; на цьому стенді — портативні бінарники (див. звіт) |
+| PostgreSQL | Локальна БД `securelab` на `127.0.0.1:54329` | `infra/compose.yaml` |
 
 Процес API і сервер PostgreSQL — **окремі** компоненти: успішний запуск API не
 доводить доступність БД, тому є окремий `GET /health`.
