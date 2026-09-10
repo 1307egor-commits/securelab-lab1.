@@ -1,0 +1,8 @@
+  Определение проектов для восстановления...
+  Все проекты обновлены для восстановления.
+  SecureLab.Api -> C:\Users\Admin\source\repos\securelab-lab1\src\SecureLab.Api\bin\Release\net10.0\SecureLab.Api.dll
+  SecureLab.Api.Tests -> C:\Users\Admin\source\repos\securelab-lab1\tests\SecureLab.Api.Tests\bin\Release\net10.0\SecureLab.Api.Tests.dll
+Тестовый запуск для C:\Users\Admin\source\repos\securelab-lab1\tests\SecureLab.Api.Tests\bin\Release\net10.0\SecureLab.Api.Tests.dll (.NETCoreApp,Version=v10.0)
+Общее количество тестовых файлов (1), соответствующих указанному шаблону.
+
+Пройден!   : не пройдено     0, пройдено     8, пропущено     0, всего     8, длительность 550 ms. - SecureLab.Api.Tests.dll (net10.0)
