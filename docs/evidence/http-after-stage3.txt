@@ -1,0 +1,94 @@
+==================================================================
+ SecureLab ЛР 1 — HTTP-докази (гілка lab/1-system, після етапу 3)
+ Стенд: PostgreSQL 17.6 (локально, порт 54329), API http://localhost:5080
+ Дата: 2026-09-10T10:24:03Z
+==================================================================
+
+### GET /health
+HTTP/1.1 200 OK
+Content-Type: application/json; charset=utf-8
+Date: Thu, 10 Sep 2026 10:24:02 GMT
+Server: Kestrel
+Transfer-Encoding: chunked
+
+{"status":"healthy","database":"reachable"}
+
+
+### GET /api/incidents
+HTTP/1.1 200 OK
+Content-Type: application/json; charset=utf-8
+Date: Thu, 10 Sep 2026 10:24:03 GMT
+Server: Kestrel
+Transfer-Encoding: chunked
+
+[{"id":"20000000-0000-0000-0000-000000000001","title":"Підозрілий лист із вкладенням","severity":"Medium","status":"Triaged","occurredAtUtc":"2026-08-01T08:30:00+00:00","createdAtUtc":"2026-08-01T09:00:00+00:00"},{"id":"20000000-0000-0000-0000-000000000002","title":"Масове сканування портів із зовнішньої адреси","severity":"High","status":"New","occurredAtUtc":"2026-08-03T22:15:00+00:00","createdAtUtc":"2026-08-03T22:40:00+00:00"},{"id":"20000000-0000-0000-0000-000000000003","title":"Перевірка журналу комп'ютерного класу","severity":"Low","status":"New","occurredAtUtc":"2026-08-05T11:00:00+00:00","createdAtUtc":"2026-08-05T11:20:00+00:00"}]
+
+
+### GET /api/incidents?status=Triaged
+HTTP/1.1 200 OK
+Content-Type: application/json; charset=utf-8
+Date: Thu, 10 Sep 2026 10:24:03 GMT
+Server: Kestrel
+Transfer-Encoding: chunked
+
+[{"id":"20000000-0000-0000-0000-000000000001","title":"Підозрілий лист із вкладенням","severity":"Medium","status":"Triaged","occurredAtUtc":"2026-08-01T08:30:00+00:00","createdAtUtc":"2026-08-01T09:00:00+00:00"}]
+
+
+### GET /api/incidents?status=Resolved
+HTTP/1.1 200 OK
+Content-Type: application/json; charset=utf-8
+Date: Thu, 10 Sep 2026 10:24:03 GMT
+Server: Kestrel
+Transfer-Encoding: chunked
+
+[]
+
+
+### GET /api/incidents?status=Unknown
+HTTP/1.1 400 Bad Request
+Content-Type: application/problem+json
+Date: Thu, 10 Sep 2026 10:24:03 GMT
+Server: Kestrel
+Transfer-Encoding: chunked
+
+{"type":"https://tools.ietf.org/html/rfc9110#section-15.5.1","title":"One or more validation errors occurred.","status":400,"errors":{"status":["Невідоме значення статусу: 'Unknown'."]},"traceId":"00-8ebc1ead5b53b1bd81ed18d2a6aeb3fe-364e73548d2e51d0-00"}
+
+
+### GET /api/incidents/20000000-0000-0000-0000-000000000003
+HTTP/1.1 200 OK
+Content-Type: application/json; charset=utf-8
+Date: Thu, 10 Sep 2026 10:24:03 GMT
+Server: Kestrel
+Transfer-Encoding: chunked
+
+{"id":"20000000-0000-0000-0000-000000000003","title":"Перевірка журналу комп'ютерного класу","description":"Лаборант повідомив про сторонній запис у журналі доступу. Приклад підозрілого рядка з журналу: <script>alert('xss')</script> — його слід показувати як звичайний текст.","severity":"Low","status":"New","occurredAtUtc":"2026-08-05T11:00:00+00:00","createdAtUtc":"2026-08-05T11:20:00+00:00","ownerDisplayName":"Morgan","comments":[{"authorDisplayName":"Alice","body":"Журнал вивантажено, аномальний запис локалізовано за часовою міткою.","createdAtUtc":"2026-08-05T12:00:00+00:00"}]}
+
+
+### GET /api/incidents/99999999-9999-9999-9999-999999999999
+HTTP/1.1 404 Not Found
+Content-Type: application/problem+json
+Date: Thu, 10 Sep 2026 10:24:03 GMT
+Server: Kestrel
+Transfer-Encoding: chunked
+
+{"type":"https://tools.ietf.org/html/rfc9110#section-15.5.5","title":"Інцидент не знайдено","status":404,"detail":"Інцидент з ідентифікатором 99999999-9999-9999-9999-999999999999 не знайдено.","traceId":"00-c6ae6e82123ec1e5522b7799a123d972-b9ed450fc04724a3-00"}
+
+
+### GET /api/incidents/aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa
+HTTP/1.1 404 Not Found
+Content-Type: application/problem+json
+Date: Thu, 10 Sep 2026 10:24:03 GMT
+Server: Kestrel
+Transfer-Encoding: chunked
+
+{"type":"https://tools.ietf.org/html/rfc9110#section-15.5.5","title":"Інцидент не знайдено","status":404,"detail":"Інцидент з ідентифікатором aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa не знайдено.","traceId":"00-b731775cffab41f5cb2570d3fde424a4-3dfe08405a813af4-00"}
+
+
+### GET /api/incidents/severity-summary
+HTTP/1.1 200 OK
+Content-Type: application/json; charset=utf-8
+Date: Thu, 10 Sep 2026 10:24:03 GMT
+Server: Kestrel
+Transfer-Encoding: chunked
+
+[{"severity":"Low","count":1},{"severity":"Medium","count":1},{"severity":"High","count":1},{"severity":"Critical","count":0}]

@@ -1,0 +1,9 @@
+# BASELINE (main, tag starter-v0.1.0) — GET /api/incidents/severity-summary
+
+HTTP/1.1 501 Not Implemented
+Content-Type: application/problem+json
+Date: Thu, 10 Sep 2026 10:22:58 GMT
+Server: Kestrel
+Transfer-Encoding: chunked
+
+{"type":"https://tools.ietf.org/html/rfc9110#section-15.6.2","title":"Не реалізовано","status":501,"detail":"Точку розширення GET /api/incidents/severity-summary ще не реалізовано в baseline.","traceId":"00-018aa14c1956b20fe16ec6dac22b3eaa-8c5daf2edfa96917-00"}

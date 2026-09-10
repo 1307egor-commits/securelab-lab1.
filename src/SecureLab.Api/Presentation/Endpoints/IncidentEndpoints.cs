@@ -27,12 +27,21 @@ public static class IncidentEndpoints
 
         group.MapGet("/severity-summary", GetSeveritySummaryAsync)
             .WithName("GetIncidentSeveritySummary")
-            // BASELINE: точка розширення ще не реалізована. ЛР 1, етап 3
-            // замінює цю заготовку робочим endpoint і прибирає цей 501.
-            .ProducesProblem(StatusCodes.Status501NotImplemented);
+            // ЕТАП 3: реалізована точка розширення. Успішна відповідь — типізований
+            // масив підсумку; некоректний ?status= дає 400 Validation Problem Details.
+            .Produces<IReadOnlyList<IncidentSeveritySummaryResponse>>()
+            .ProducesValidationProblem();
 
         return app;
     }
+
+    /// <summary>
+    /// Дозволені значення фільтра <c>?status=</c> для підсумку за severity.
+    /// Явний allowlist: усе поза ним — 400, а не тиха підстановка.
+    /// </summary>
+    private static readonly string[] SummaryStatusAllowlist =
+        [nameof(IncidentStatus.New), nameof(IncidentStatus.Triaged), nameof(IncidentStatus.InProgress),
+         nameof(IncidentStatus.Resolved), nameof(IncidentStatus.Closed)];
 
     /// <summary>
     /// GET /api/incidents[?status=...]. Значення status контролює клієнт, тому
@@ -85,14 +94,38 @@ public static class IncidentEndpoints
     }
 
     /// <summary>
-    /// BASELINE-заготовка. Повертає 501 Not Implemented — це не помилка запуску,
-    /// а навмисна позначка незавершеної функції.
+    /// GET /api/incidents/severity-summary[?status=...]. Повертає кількість
+    /// інцидентів за кожним рівнем критичності (політика повного переліку
+    /// рівнів, явний порядок критичності). Необов'язковий <c>?status=</c>
+    /// перевіряється за allowlist: невідоме значення — 400 Validation Problem Details.
     /// </summary>
-    private static IResult GetSeveritySummaryAsync()
+    private static async Task<IResult> GetSeveritySummaryAsync(
+        string? status,
+        IncidentQueries queries,
+        CancellationToken cancellationToken)
     {
-        return Results.Problem(
-            statusCode: StatusCodes.Status501NotImplemented,
-            title: "Не реалізовано",
-            detail: "Точку розширення GET /api/incidents/severity-summary ще не реалізовано в baseline.");
+        IncidentStatus? parsedStatus = null;
+
+        if (!string.IsNullOrWhiteSpace(status))
+        {
+            var match = SummaryStatusAllowlist.FirstOrDefault(
+                allowed => string.Equals(allowed, status, StringComparison.OrdinalIgnoreCase));
+
+            if (match is null || !Enum.TryParse(match, out IncidentStatus parsed))
+            {
+                return Results.ValidationProblem(new Dictionary<string, string[]>
+                {
+                    ["status"] =
+                    [
+                        $"Невідоме значення статусу: '{status}'. Дозволені: {string.Join(", ", SummaryStatusAllowlist)}."
+                    ]
+                });
+            }
+
+            parsedStatus = parsed;
+        }
+
+        var summary = await queries.GetSeveritySummaryAsync(parsedStatus, cancellationToken);
+        return Results.Ok(summary);
     }
 }
