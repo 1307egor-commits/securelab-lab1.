@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using SecureLab.Api.Data;
+using SecureLab.Api.Data.Entities;
 using SecureLab.Api.Presentation.Contracts;
 
 namespace SecureLab.Api.Application.Incidents;

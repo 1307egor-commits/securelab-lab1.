@@ -1,4 +1,4 @@
-namespace SecureLab.Api.Data;
+namespace SecureLab.Api.Data.Entities;
 
 /// <summary>
 /// Стан обробки інциденту. Зберігається як текст у PostgreSQL. Клієнтський

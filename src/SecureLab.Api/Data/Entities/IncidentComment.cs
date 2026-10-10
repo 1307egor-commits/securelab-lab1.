@@ -1,4 +1,4 @@
-namespace SecureLab.Api.Data;
+namespace SecureLab.Api.Data.Entities;
 
 /// <summary>
 /// Коментар до інциденту. Частина коментарів позначена як внутрішня

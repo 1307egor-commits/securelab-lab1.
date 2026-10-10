@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using SecureLab.Api.Data.Entities;
 
 namespace SecureLab.Api.Data;
 
@@ -81,5 +82,19 @@ public class SecureLabDbContext(DbContextOptions<SecureLabDbContext> options) : 
             entity.Property(s => s.ToStatus).HasConversion<string>().HasMaxLength(20).IsRequired();
             entity.Property(s => s.ChangedByDisplayName).HasMaxLength(200).IsRequired();
         });
+
+        // Колонки в PostgreSQL мають snake_case-імена (created_at_utc, owner_user_id),
+        // як у канонічному starter: на них розраховані scaffold-и наступних ЛР.
+        foreach (var entityType in modelBuilder.Model.GetEntityTypes())
+        {
+            foreach (var property in entityType.GetProperties())
+            {
+                property.SetColumnName(ToSnakeCase(property.Name));
+            }
+        }
     }
+
+    private static string ToSnakeCase(string name) =>
+        string.Concat(name.Select((ch, index) =>
+            index > 0 && char.IsUpper(ch) ? "_" + char.ToLowerInvariant(ch) : char.ToLowerInvariant(ch).ToString()));
 }

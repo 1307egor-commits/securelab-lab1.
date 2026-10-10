@@ -1,4 +1,4 @@
-namespace SecureLab.Api.Data;
+namespace SecureLab.Api.Data.Entities;
 
 /// <summary>
 /// Запис про зміну статусу інциденту. У ЛР 1 не має власного endpoint,

@@ -21,9 +21,7 @@ public sealed class SecureLabApiFactory : WebApplicationFactory<Program>, IAsync
 
     public async Task InitializeAsync()
     {
-        using var scope = Services.CreateScope();
-        var db = scope.ServiceProvider.GetRequiredService<SecureLabDbContext>();
-        await DbSeeder.ResetAsync(db);
+        await DatabaseBootstrap.InitializeAsync(Services, reset: true);
     }
 
     public new Task DisposeAsync() => Task.CompletedTask;

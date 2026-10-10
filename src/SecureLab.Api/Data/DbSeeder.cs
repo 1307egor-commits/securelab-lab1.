@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using SecureLab.Api.Data.Entities;
 
 namespace SecureLab.Api.Data;
 
@@ -72,6 +73,7 @@ public static class DbSeeder
             Status = IncidentStatus.Triaged,
             OccurredAtUtc = new DateTimeOffset(2026, 8, 1, 8, 30, 0, TimeSpan.Zero),
             CreatedAtUtc = new DateTimeOffset(2026, 8, 1, 9, 0, 0, TimeSpan.Zero),
+            UpdatedAtUtc = new DateTimeOffset(2026, 8, 1, 9, 0, 0, TimeSpan.Zero),
             OwnerUserId = AliceId
         };
 
@@ -85,6 +87,7 @@ public static class DbSeeder
             Status = IncidentStatus.New,
             OccurredAtUtc = new DateTimeOffset(2026, 8, 3, 22, 15, 0, TimeSpan.Zero),
             CreatedAtUtc = new DateTimeOffset(2026, 8, 3, 22, 40, 0, TimeSpan.Zero),
+            UpdatedAtUtc = new DateTimeOffset(2026, 8, 3, 22, 40, 0, TimeSpan.Zero),
             OwnerUserId = BobId
         };
 
@@ -100,6 +103,7 @@ public static class DbSeeder
             Status = IncidentStatus.New,
             OccurredAtUtc = new DateTimeOffset(2026, 8, 5, 11, 0, 0, TimeSpan.Zero),
             CreatedAtUtc = new DateTimeOffset(2026, 8, 5, 11, 20, 0, TimeSpan.Zero),
+            UpdatedAtUtc = new DateTimeOffset(2026, 8, 5, 11, 20, 0, TimeSpan.Zero),
             OwnerUserId = MorganId
         };
 

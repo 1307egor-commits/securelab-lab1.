@@ -1,4 +1,4 @@
-namespace SecureLab.Api.Data;
+namespace SecureLab.Api.Data.Entities;
 
 /// <summary>
 /// Обліковий запис користувача навчального стенда. Entity описує модель

@@ -1,4 +1,4 @@
-namespace SecureLab.Api.Data;
+namespace SecureLab.Api.Data.Entities;
 
 /// <summary>
 /// Рівень критичності інциденту. Значення зберігається в PostgreSQL як текст

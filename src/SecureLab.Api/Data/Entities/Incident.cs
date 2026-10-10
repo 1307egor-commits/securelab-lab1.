@@ -1,4 +1,4 @@
-namespace SecureLab.Api.Data;
+namespace SecureLab.Api.Data.Entities;
 
 /// <summary>
 /// Інцидент безпеки — основна entity стенда. Зберігається в таблиці
@@ -25,6 +25,9 @@ public class Incident
     public DateTimeOffset OccurredAtUtc { get; set; }
 
     public DateTimeOffset CreatedAtUtc { get; set; }
+
+    // Server-managed audit-час останньої зміни. Встановлює сервер, а не клієнт.
+    public DateTimeOffset UpdatedAtUtc { get; set; }
 
     // Власник інциденту. OwnerUserId та Owner.Email є внутрішніми полями
     // і не входять до зовнішнього контракту деталей.

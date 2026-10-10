@@ -22,39 +22,51 @@ namespace SecureLab.Api.Data.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("SecureLab.Api.Data.Incident", b =>
+            modelBuilder.Entity("SecureLab.Api.Data.Entities.Incident", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
 
                     b.Property<DateTimeOffset>("CreatedAtUtc")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at_utc");
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("description");
 
                     b.Property<DateTimeOffset>("OccurredAtUtc")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("occurred_at_utc");
 
                     b.Property<Guid>("OwnerUserId")
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("owner_user_id");
 
                     b.Property<string>("Severity")
                         .IsRequired()
                         .HasMaxLength(20)
-                        .HasColumnType("character varying(20)");
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("severity");
 
                     b.Property<string>("Status")
                         .IsRequired()
                         .HasMaxLength(20)
-                        .HasColumnType("character varying(20)");
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("status");
 
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(300)
-                        .HasColumnType("character varying(300)");
+                        .HasColumnType("character varying(300)")
+                        .HasColumnName("title");
+
+                    b.Property<DateTimeOffset>("UpdatedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at_utc");
 
                     b.HasKey("Id");
 
@@ -63,29 +75,35 @@ namespace SecureLab.Api.Data.Migrations
                     b.ToTable("incidents", (string)null);
                 });
 
-            modelBuilder.Entity("SecureLab.Api.Data.IncidentComment", b =>
+            modelBuilder.Entity("SecureLab.Api.Data.Entities.IncidentComment", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
 
                     b.Property<string>("AuthorDisplayName")
                         .IsRequired()
                         .HasMaxLength(200)
-                        .HasColumnType("character varying(200)");
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("author_display_name");
 
                     b.Property<string>("Body")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("body");
 
                     b.Property<DateTimeOffset>("CreatedAtUtc")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at_utc");
 
                     b.Property<Guid>("IncidentId")
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("incident_id");
 
                     b.Property<bool>("IsInternal")
-                        .HasColumnType("boolean");
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_internal");
 
                     b.HasKey("Id");
 
@@ -94,32 +112,38 @@ namespace SecureLab.Api.Data.Migrations
                     b.ToTable("incident_comments", (string)null);
                 });
 
-            modelBuilder.Entity("SecureLab.Api.Data.IncidentStatusChange", b =>
+            modelBuilder.Entity("SecureLab.Api.Data.Entities.IncidentStatusChange", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
 
                     b.Property<DateTimeOffset>("ChangedAtUtc")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("changed_at_utc");
 
                     b.Property<string>("ChangedByDisplayName")
                         .IsRequired()
                         .HasMaxLength(200)
-                        .HasColumnType("character varying(200)");
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("changed_by_display_name");
 
                     b.Property<string>("FromStatus")
                         .IsRequired()
                         .HasMaxLength(20)
-                        .HasColumnType("character varying(20)");
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("from_status");
 
                     b.Property<Guid>("IncidentId")
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("incident_id");
 
                     b.Property<string>("ToStatus")
                         .IsRequired()
                         .HasMaxLength(20)
-                        .HasColumnType("character varying(20)");
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("to_status");
 
                     b.HasKey("Id");
 
@@ -128,35 +152,39 @@ namespace SecureLab.Api.Data.Migrations
                     b.ToTable("incident_status_changes", (string)null);
                 });
 
-            modelBuilder.Entity("SecureLab.Api.Data.User", b =>
+            modelBuilder.Entity("SecureLab.Api.Data.Entities.User", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
 
                     b.Property<string>("DisplayName")
                         .IsRequired()
                         .HasMaxLength(200)
-                        .HasColumnType("character varying(200)");
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("display_name");
 
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasMaxLength(320)
-                        .HasColumnType("character varying(320)");
+                        .HasColumnType("character varying(320)")
+                        .HasColumnName("email");
 
                     b.Property<string>("Role")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("role");
 
                     b.HasKey("Id");
 
                     b.ToTable("users", (string)null);
                 });
 
-            modelBuilder.Entity("SecureLab.Api.Data.Incident", b =>
+            modelBuilder.Entity("SecureLab.Api.Data.Entities.Incident", b =>
                 {
-                    b.HasOne("SecureLab.Api.Data.User", "Owner")
+                    b.HasOne("SecureLab.Api.Data.Entities.User", "Owner")
                         .WithMany("OwnedIncidents")
                         .HasForeignKey("OwnerUserId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -165,9 +193,9 @@ namespace SecureLab.Api.Data.Migrations
                     b.Navigation("Owner");
                 });
 
-            modelBuilder.Entity("SecureLab.Api.Data.IncidentComment", b =>
+            modelBuilder.Entity("SecureLab.Api.Data.Entities.IncidentComment", b =>
                 {
-                    b.HasOne("SecureLab.Api.Data.Incident", "Incident")
+                    b.HasOne("SecureLab.Api.Data.Entities.Incident", "Incident")
                         .WithMany("Comments")
                         .HasForeignKey("IncidentId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -176,9 +204,9 @@ namespace SecureLab.Api.Data.Migrations
                     b.Navigation("Incident");
                 });
 
-            modelBuilder.Entity("SecureLab.Api.Data.IncidentStatusChange", b =>
+            modelBuilder.Entity("SecureLab.Api.Data.Entities.IncidentStatusChange", b =>
                 {
-                    b.HasOne("SecureLab.Api.Data.Incident", "Incident")
+                    b.HasOne("SecureLab.Api.Data.Entities.Incident", "Incident")
                         .WithMany("StatusChanges")
                         .HasForeignKey("IncidentId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -187,14 +215,14 @@ namespace SecureLab.Api.Data.Migrations
                     b.Navigation("Incident");
                 });
 
-            modelBuilder.Entity("SecureLab.Api.Data.Incident", b =>
+            modelBuilder.Entity("SecureLab.Api.Data.Entities.Incident", b =>
                 {
                     b.Navigation("Comments");
 
                     b.Navigation("StatusChanges");
                 });
 
-            modelBuilder.Entity("SecureLab.Api.Data.User", b =>
+            modelBuilder.Entity("SecureLab.Api.Data.Entities.User", b =>
                 {
                     b.Navigation("OwnedIncidents");
                 });

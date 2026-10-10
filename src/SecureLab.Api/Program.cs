@@ -39,9 +39,7 @@ if (args.Contains("--reset-database"))
         return 1;
     }
 
-    using var resetScope = app.Services.CreateScope();
-    var resetDb = resetScope.ServiceProvider.GetRequiredService<SecureLabDbContext>();
-    await DbSeeder.ResetAsync(resetDb);
+    await DatabaseBootstrap.InitializeAsync(app.Services, reset: true);
     app.Logger.LogInformation("Навчальні дані повернуто до відомого seed-стану.");
     return 0;
 }
@@ -52,10 +50,12 @@ if (app.Environment.IsDevelopment())
     app.MapScalarApiReference();
 
     // Перший Development-запуск застосовує готову migration і додає seed-дані.
-    using var seedScope = app.Services.CreateScope();
-    var seedDb = seedScope.ServiceProvider.GetRequiredService<SecureLabDbContext>();
-    await DbSeeder.SeedAsync(seedDb);
+    await DatabaseBootstrap.InitializeAsync(app.Services, reset: false);
 }
+
+// Неочікуваний виняток -> 500 Problem Details без stack trace, SQL чи
+// connection string (разом з AddProblemDetails вище).
+app.UseExceptionHandler();
 
 app.UseDefaultFiles();
 app.UseStaticFiles();
