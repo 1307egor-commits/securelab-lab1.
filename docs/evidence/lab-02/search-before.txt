@@ -1,0 +1,81 @@
+# captured 2026-10-10T13:29:03Z against http://localhost:5080 (local Development, artificial seed)
+### T-04 normal search
+GET /api/incidents/search?q=USB
+HTTP 200  Content-Type: application/json; charset=utf-8
+records: 1
+  20000000-0000-0000-0000-000000000005  [Low      New       ] Перевірка USB навчальної мережі
+
+### baseline: no-match value
+GET /api/incidents/search?q=zz-no-match
+HTTP 200  Content-Type: application/json; charset=utf-8
+records: 0
+
+### S-01/S-02 read-only control input
+GET /api/incidents/search?q=zz-no-match%27%20OR%20TRUE%20--%20
+HTTP 200  Content-Type: application/json; charset=utf-8
+records: 5
+  20000000-0000-0000-0000-000000000001  [Medium   Triaged   ] Підозрілий лист із вкладенням
+  20000000-0000-0000-0000-000000000002  [High     New       ] Масове сканування портів із зовнішньої адреси
+  20000000-0000-0000-0000-000000000003  [Low      New       ] Перевірка журналу комп'ютерного класу
+  20000000-0000-0000-0000-000000000004  [Low      New       ] O'Brien classroom report
+  20000000-0000-0000-0000-000000000005  [Low      New       ] Перевірка USB навчальної мережі
+
+### T-04 legitimate apostrophe
+GET /api/incidents/search?q=%D0%BA%D0%BE%D0%BC%D0%BF%27%D1%8E%D1%82%D0%B5%D1%80%D0%BD%D0%BE%D0%B3%D0%BE
+HTTP 500  Content-Type: application/problem+json
+{"type":"https://tools.ietf.org/html/rfc9110#section-15.6.1","title":"An error occurred while processing your request.","status":500,"traceId":"00-d31765685c8c4202ac04ce0c4e2645c5-bfd7347cb2381e38-00"}
+
+### T-04 legitimate apostrophe (scaffold)
+GET /api/incidents/search?q=O%27Brien
+HTTP 500  Content-Type: application/problem+json
+{"type":"https://tools.ietf.org/html/rfc9110#section-15.6.1","title":"An error occurred while processing your request.","status":500,"traceId":"00-97d96ee10344657f00521cc021059a84-59e5577751b9af15-00"}
+
+### ILIKE metacharacter %
+GET /api/incidents/search?q=%25
+HTTP 200  Content-Type: application/json; charset=utf-8
+records: 5
+  20000000-0000-0000-0000-000000000003  [Low      New       ] Перевірка журналу комп'ютерного класу
+  20000000-0000-0000-0000-000000000002  [High     New       ] Масове сканування портів із зовнішньої адреси
+  20000000-0000-0000-0000-000000000004  [Low      New       ] O'Brien classroom report
+  20000000-0000-0000-0000-000000000005  [Low      New       ] Перевірка USB навчальної мережі
+  20000000-0000-0000-0000-000000000001  [Medium   Triaged   ] Підозрілий лист із вкладенням
+
+### default sort (no sortBy)
+GET /api/incidents/search?q=
+HTTP 200  Content-Type: application/json; charset=utf-8
+records: 5
+  20000000-0000-0000-0000-000000000003  [Low      New       ] Перевірка журналу комп'ютерного класу
+  20000000-0000-0000-0000-000000000002  [High     New       ] Масове сканування портів із зовнішньої адреси
+  20000000-0000-0000-0000-000000000004  [Low      New       ] O'Brien classroom report
+  20000000-0000-0000-0000-000000000005  [Low      New       ] Перевірка USB навчальної мережі
+  20000000-0000-0000-0000-000000000001  [Medium   Triaged   ] Підозрілий лист із вкладенням
+
+### sortBy=severity
+GET /api/incidents/search?q=&sortBy=severity
+HTTP 200  Content-Type: application/json; charset=utf-8
+records: 5
+  20000000-0000-0000-0000-000000000002  [High     New       ] Масове сканування портів із зовнішньої адреси
+  20000000-0000-0000-0000-000000000003  [Low      New       ] Перевірка журналу комп'ютерного класу
+  20000000-0000-0000-0000-000000000004  [Low      New       ] O'Brien classroom report
+  20000000-0000-0000-0000-000000000005  [Low      New       ] Перевірка USB навчальної мережі
+  20000000-0000-0000-0000-000000000001  [Medium   Triaged   ] Підозрілий лист із вкладенням
+
+### sortBy=status
+GET /api/incidents/search?q=&sortBy=status
+HTTP 200  Content-Type: application/json; charset=utf-8
+records: 5
+  20000000-0000-0000-0000-000000000002  [High     New       ] Масове сканування портів із зовнішньої адреси
+  20000000-0000-0000-0000-000000000003  [Low      New       ] Перевірка журналу комп'ютерного класу
+  20000000-0000-0000-0000-000000000004  [Low      New       ] O'Brien classroom report
+  20000000-0000-0000-0000-000000000005  [Low      New       ] Перевірка USB навчальної мережі
+  20000000-0000-0000-0000-000000000001  [Medium   Triaged   ] Підозрілий лист із вкладенням
+
+### T-05 sortBy outside allowlist
+GET /api/incidents/search?q=&sortBy=title
+HTTP 200  Content-Type: application/json; charset=utf-8
+records: 5
+  20000000-0000-0000-0000-000000000004  [Low      New       ] O'Brien classroom report
+  20000000-0000-0000-0000-000000000002  [High     New       ] Масове сканування портів із зовнішньої адреси
+  20000000-0000-0000-0000-000000000005  [Low      New       ] Перевірка USB навчальної мережі
+  20000000-0000-0000-0000-000000000003  [Low      New       ] Перевірка журналу комп'ютерного класу
+  20000000-0000-0000-0000-000000000001  [Medium   Triaged   ] Підозрілий лист із вкладенням

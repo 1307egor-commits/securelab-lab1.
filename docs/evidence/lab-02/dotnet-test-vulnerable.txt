@@ -1,0 +1,42 @@
+# dotnet test tests/SecureLab.Api.Tests/SecureLab.Api.Tests.csproj -c Release  (vulnerable commit state, 2026-10-10T13:29:25Z)
+  Пройден SecureLab.Api.Tests.IncidentEndpointTests.ClientScript_DoesNotUseDangerousInnerHtmlSink [4 ms]
+  Пройден SecureLab.Api.Tests.IncidentEndpointTests.GetIncidentDetails_DoesNotExposeOwnerUserIdOrEmail [268 ms]
+  Пройден SecureLab.Api.Tests.IncidentEndpointTests.GetIncidentDetails_UnknownId_ReturnsProblemDetails404 [35 ms]
+  Пройден SecureLab.Api.Tests.IncidentEndpointTests.GetSeveritySummary_IsNoLongerBaseline501 [54 ms]
+  Пройден SecureLab.Api.Tests.IncidentEndpointTests.GetSeveritySummary_WithStatusFilter_CountsOnlyMatchingIncidents [23 ms]
+  Пройден SecureLab.Api.Tests.IncidentEndpointTests.GetSeveritySummary_ReturnsAllLevelsInCriticalityOrder_WithBaselineSeedCounts [20 ms]
+  Пройден SecureLab.Api.Tests.IncidentEndpointTests.GetSeveritySummary_UnknownStatus_ReturnsValidationProblem400 [3 ms]
+  Пройден SecureLab.Api.Tests.IncidentEndpointTests.GetIncidents_ReturnsSeededIncidents [18 ms]
+  Пройден SecureLab.Api.Tests.SearchSecurityTests.T04_NormalSearch_Usb_ReturnsOnlyMatchingRecord [42 ms]
+  Не пройден SecureLab.Api.Tests.SearchSecurityTests.T04_LegitimateApostrophe_FindsComputerClassIncident [51 ms]
+Expected: OK
+Actual:   InternalServerError
+  Не пройден SecureLab.Api.Tests.SearchSecurityTests.T04_LegitimateApostrophe_OBrien [16 ms]
+Expected: OK
+Actual:   InternalServerError
+  Не пройден SecureLab.Api.Tests.SearchSecurityTests.S02_ControlInput_DoesNotWidenResults [18 ms]
+   Assert.Empty() Failure: Collection was not empty
+  Пройден SecureLab.Api.Tests.SearchMechanicsTests.Search_ReturnsJson [17 ms]
+  Пройден SecureLab.Api.Tests.IncidentCreateTests.T01_ValidRequest_Returns201WithResponseDtoOnly [49 ms]
+  Пройден SecureLab.Api.Tests.IncidentCreateTests.T02_SeveritySeven_IsRejectedByIsDefined_Returns400 [5 ms]
+  Пройден SecureLab.Api.Tests.IncidentCreateTests.T02_InvalidSeverity_Returns400(severity: "") [3 ms]
+  Пройден SecureLab.Api.Tests.IncidentCreateTests.T02_InvalidSeverity_Returns400(severity: "Low, High") [1 ms]
+  Пройден SecureLab.Api.Tests.IncidentCreateTests.T02_InvalidSeverity_Returns400(severity: "2") [1 ms]
+  Пройден SecureLab.Api.Tests.IncidentCreateTests.T02_InvalidSeverity_Returns400(severity: "Extreme") [1 ms]
+  Пройден SecureLab.Api.Tests.IncidentCreateTests.T02_WhitespaceTitle_Returns400 [2 ms]
+  Пройден SecureLab.Api.Tests.IncidentCreateTests.A02_ServerManagedFieldsInBody_AreIgnored [26 ms]
+  Пройден SecureLab.Api.Tests.IncidentCreateTests.T09_HighOrCritical_Description39Rejected_40Accepted(severity: "Critical") [5 ms]
+  Пройден SecureLab.Api.Tests.IncidentCreateTests.T09_HighOrCritical_Description39Rejected_40Accepted(severity: "High") [7 ms]
+  Пройден SecureLab.Api.Tests.IncidentCreateTests.T02_OccurredAtMoreThanFiveMinutesInFuture_Returns400 [2 ms]
+  Пройден SecureLab.Api.Tests.IncidentCreateTests.T02_MissingFields_Returns400ForEachField [3 ms]
+  Пройден SecureLab.Api.Tests.IncidentCreateTests.T10_DescriptionRepeatingTitle_Rejected_ExtendedDescriptionAccepted [5 ms]
+  Пройден SecureLab.Api.Tests.IncidentCreateTests.T02_DescriptionLongerThan4000_Returns400 [3 ms]
+  Пройден SecureLab.Api.Tests.IncidentCreateTests.T03_DuplicateOfTriagedOrInProgress_Returns409(existingStatus: Triaged) [18 ms]
+  Пройден SecureLab.Api.Tests.IncidentCreateTests.T03_DuplicateOfTriagedOrInProgress_Returns409(existingStatus: InProgress) [7 ms]
+  Пройден SecureLab.Api.Tests.IncidentCreateTests.T02_TitleLongerThan160_Returns400 [2 ms]
+  Пройден SecureLab.Api.Tests.IncidentCreateTests.T02_MissingOccurredAtUtc_Returns400 [2 ms]
+  Пройден SecureLab.Api.Tests.IncidentCreateTests.T09_LowSeverity_ShortDescriptionIsAllowed [4 ms]
+  Пройден SecureLab.Api.Tests.IncidentCreateTests.T03_DuplicateActiveTitle_Returns409_ThenCaseAndClosedRulesHold [15 ms]
+  Пройден SecureLab.Api.Tests.IncidentCreateTests.T01_OccurredAtWithinFiveMinuteSkew_IsAccepted [4 ms]
+  Пройден SecureLab.Api.Tests.IncidentCreateTests.T02_MalformedJson_Returns400ProblemDetailsWithoutInternals [5 ms]
+Итог: не пройдено 3, пройдено 32, всего 35 — червоні лише T-04 apostrophe x2 та S-02 control input (очікувано до fix)

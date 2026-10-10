@@ -10,6 +10,13 @@ namespace SecureLab.Api.Data;
 /// </summary>
 public class SecureLabDbContext(DbContextOptions<SecureLabDbContext> options) : DbContext(options)
 {
+    /// <summary>
+    /// Частковий унікальний індекс: не більше одного не закритого інциденту з тим
+    /// самим title. Остання лінія цілісності за паралельних запитів; звичайний
+    /// конфлікт API пояснює раніше через перевірку AnyAsync.
+    /// </summary>
+    public const string ActiveIncidentTitleIndex = "ux_incidents_active_title";
+
     public DbSet<Incident> Incidents => Set<Incident>();
 
     public DbSet<User> Users => Set<User>();
@@ -37,6 +44,11 @@ public class SecureLabDbContext(DbContextOptions<SecureLabDbContext> options) : 
             entity.HasKey(i => i.Id);
             entity.Property(i => i.Title).HasMaxLength(300).IsRequired();
             entity.Property(i => i.Description).IsRequired();
+
+            entity.HasIndex(i => i.Title)
+                .HasDatabaseName(ActiveIncidentTitleIndex)
+                .IsUnique()
+                .HasFilter("status <> 'Closed'");
 
             // Enum -> text у PostgreSQL. Наслідок: сортування в SQL за цим
             // стовпцем лексикографічне, а не за порядком критичності.

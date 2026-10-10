@@ -72,6 +72,11 @@ namespace SecureLab.Api.Data.Migrations
 
                     b.HasIndex("OwnerUserId");
 
+                    b.HasIndex("Title")
+                        .IsUnique()
+                        .HasDatabaseName("ux_incidents_active_title")
+                        .HasFilter("status <> 'Closed'");
+
                     b.ToTable("incidents", (string)null);
                 });
 

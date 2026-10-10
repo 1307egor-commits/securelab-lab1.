@@ -42,3 +42,16 @@ public sealed record IncidentCommentResponse(
 public sealed record IncidentSeveritySummaryResponse(
     string Severity,
     int Count);
+
+/// <summary>
+/// Відповідь 201 Created для POST /api/incidents. Окремий response DTO, а не
+/// entity: без OwnerUserId, зв'язків і внутрішніх полів.
+/// </summary>
+public sealed record CreatedIncidentResponse(
+    Guid Id,
+    string Title,
+    string Severity,
+    string Status,
+    DateTimeOffset OccurredAtUtc,
+    DateTimeOffset CreatedAtUtc,
+    DateTimeOffset UpdatedAtUtc);

@@ -24,6 +24,8 @@ builder.Services.AddDbContext<SecureLabDbContext>(options =>
     options.UseNpgsql(connectionString));
 
 builder.Services.AddScoped<IncidentQueries>();
+builder.Services.AddScoped<IncidentCommands>();
+builder.Services.AddSingleton(TimeProvider.System);
 
 builder.Services.AddProblemDetails();
 builder.Services.AddOpenApi();
@@ -55,8 +57,14 @@ if (app.Environment.IsDevelopment())
 }
 
 // Неочікуваний виняток -> 500 Problem Details без stack trace, SQL чи
-// connection string (разом з AddProblemDetails вище).
-app.UseExceptionHandler();
+// connection string (разом з AddProblemDetails вище). Помилка читання запиту
+// (битий JSON, відсутнє body) — це помилка клієнта: 400, а не 500.
+app.UseExceptionHandler(new ExceptionHandlerOptions
+{
+    StatusCodeSelector = exception => exception is BadHttpRequestException badRequest
+        ? badRequest.StatusCode
+        : StatusCodes.Status500InternalServerError
+});
 
 app.UseDefaultFiles();
 app.UseStaticFiles();
