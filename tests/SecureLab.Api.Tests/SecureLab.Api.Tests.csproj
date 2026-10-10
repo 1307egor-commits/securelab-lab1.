@@ -22,4 +22,8 @@
     <ProjectReference Include="..\..\src\SecureLab.Api\SecureLab.Api.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Using Include="Xunit" />
+  </ItemGroup>
+
 </Project>

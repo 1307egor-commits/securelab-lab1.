@@ -19,5 +19,6 @@ public static class DatabaseBootstrap
         }
 
         await DbSeeder.SeedAsync(dbContext);
+        await SecureLab.Api.Scaffolding.Lab02Seed.EnsureAsync(services);
     }
 }

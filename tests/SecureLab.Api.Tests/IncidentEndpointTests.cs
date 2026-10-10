@@ -67,8 +67,8 @@ public sealed class IncidentEndpointTests : IClassFixture<SecureLabApiFactory>
         // Політика повного переліку рівнів + явний порядок критичності.
         Assert.Equal(new[] { "Low", "Medium", "High", "Critical" }, summary!.Select(r => r.Severity));
 
-        // Baseline seed: по одному Low / Medium / High, Critical відсутній -> 0.
-        Assert.Equal(1, summary.Single(r => r.Severity == "Low").Count);
+        // Seed після scaffold ЛР 02: Low=3 (classLog + два Low-інциденти Lab02Seed), Medium=1, High=1, Critical=0.
+        Assert.Equal(3, summary.Single(r => r.Severity == "Low").Count);
         Assert.Equal(1, summary.Single(r => r.Severity == "Medium").Count);
         Assert.Equal(1, summary.Single(r => r.Severity == "High").Count);
         Assert.Equal(0, summary.Single(r => r.Severity == "Critical").Count);
@@ -82,8 +82,8 @@ public sealed class IncidentEndpointTests : IClassFixture<SecureLabApiFactory>
         var summary = await client.GetFromJsonAsync<List<SeverityRow>>("/api/incidents/severity-summary?status=New");
 
         Assert.NotNull(summary);
-        // Seed зі статусом New: portScan (High) і classLog (Low).
-        Assert.Equal(1, summary!.Single(r => r.Severity == "Low").Count);
+        // Seed зі статусом New: portScan (High), classLog (Low) і два Low-інциденти Lab02Seed.
+        Assert.Equal(3, summary!.Single(r => r.Severity == "Low").Count);
         Assert.Equal(0, summary.Single(r => r.Severity == "Medium").Count);
         Assert.Equal(1, summary.Single(r => r.Severity == "High").Count);
         Assert.Equal(0, summary.Single(r => r.Severity == "Critical").Count);

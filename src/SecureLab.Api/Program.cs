@@ -1,3 +1,4 @@
+using SecureLab.Api.Scaffolding;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 using SecureLab.Api.Application.Incidents;
@@ -75,6 +76,7 @@ app.MapGet("/health", async (SecureLabDbContext db, CancellationToken ct) =>
 .WithTags("Diagnostics");
 
 app.MapIncidentEndpoints();
+app.MapLab02Endpoints();
 
 // Запасний маршрут: усе, що не збіглося з API чи статичним файлом, віддає
 // index.html. Саме тому помилковий шлях /api/... може повернути 200 з HTML —
