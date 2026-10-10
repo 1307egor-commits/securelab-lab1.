@@ -1,0 +1,55 @@
+# dotnet build + dotnet test tests/SecureLab.Api.Tests/SecureLab.Api.Tests.csproj --configuration Release (fixed state, after reset, 2026-10-10T13:32:50Z)
+    Предупреждений: 0
+    Ошибок: 0
+
+Прошло времени 00:00:01.86
+
+  Пройден SecureLab.Api.Tests.IncidentCreateTests.T02_InvalidSeverity_Returns400(severity: "") [3 ms]
+  Пройден SecureLab.Api.Tests.IncidentCreateTests.T02_InvalidSeverity_Returns400(severity: "2") [4 ms]
+  Пройден SecureLab.Api.Tests.SearchSecurityTests.A02_ListStatusFilter_NumericOrCombinedAlias_Returns400(status: "2") [5 ms]
+  Пройден SecureLab.Api.Tests.IncidentCreateTests.T09_HighOrCritical_Description39Rejected_40Accepted(severity: "Critical") [5 ms]
+  Пройден SecureLab.Api.Tests.IncidentCreateTests.T02_InvalidSeverity_Returns400(severity: "Extreme") [1 ms]
+  Пройден SecureLab.Api.Tests.IncidentCreateTests.T09_HighOrCritical_Description39Rejected_40Accepted(severity: "High") [3 ms]
+  Пройден SecureLab.Api.Tests.IncidentCreateTests.T02_InvalidSeverity_Returns400(severity: "Low, High") [1 ms]
+  Пройден SecureLab.Api.Tests.SearchSecurityTests.A02_ListStatusFilter_NumericOrCombinedAlias_Returns400(status: "New, Triaged") [225 ms]
+  Пройден SecureLab.Api.Tests.SearchSecurityTests.T05_UnknownSortBy_Returns400WithSortByKey(sortBy: "Severity") [1 ms]
+  Пройден SecureLab.Api.Tests.SearchSecurityTests.T05_UnknownSortBy_Returns400WithSortByKey(sortBy: "created_at_utc DESC") [1 ms]
+  Пройден SecureLab.Api.Tests.SearchSecurityTests.T05_UnknownSortBy_Returns400WithSortByKey(sortBy: "title") [4 ms]
+  Пройден SecureLab.Api.Tests.IncidentCreateTests.T03_DuplicateOfTriagedOrInProgress_Returns409(existingStatus: InProgress) [6 ms]
+  Пройден SecureLab.Api.Tests.IncidentCreateTests.T03_DuplicateOfTriagedOrInProgress_Returns409(existingStatus: Triaged) [18 ms]
+  Пройден SecureLab.Api.Tests.IncidentEndpointTests.ClientScript_DoesNotUseDangerousInnerHtmlSink [1 ms]
+  Пройден SecureLab.Api.Tests.IncidentEndpointTests.GetIncidents_ReturnsSeededIncidents [10 ms]
+  Пройден SecureLab.Api.Tests.IncidentEndpointTests.GetSeveritySummary_WithStatusFilter_CountsOnlyMatchingIncidents [12 ms]
+  Пройден SecureLab.Api.Tests.SearchMechanicsTests.Search_ReturnsJson [12 ms]
+  Пройден SecureLab.Api.Tests.IncidentCreateTests.T03_DuplicateActiveTitle_Returns409_ThenCaseAndClosedRulesHold [16 ms]
+  Пройден SecureLab.Api.Tests.IncidentCreateTests.T02_MalformedJson_Returns400ProblemDetailsWithoutInternals [18 ms]
+  Пройден SecureLab.Api.Tests.IncidentCreateTests.T01_ValidRequest_Returns201WithResponseDtoOnly [19 ms]
+  Пройден SecureLab.Api.Tests.IncidentCreateTests.T02_MissingOccurredAtUtc_Returns400 [2 ms]
+  Пройден SecureLab.Api.Tests.IncidentCreateTests.T02_OccurredAtMoreThanFiveMinutesInFuture_Returns400 [2 ms]
+  Пройден SecureLab.Api.Tests.IncidentCreateTests.T02_TitleLongerThan160_Returns400 [2 ms]
+  Пройден SecureLab.Api.Tests.IncidentCreateTests.T02_WhitespaceTitle_Returns400 [2 ms]
+  Пройден SecureLab.Api.Tests.IncidentEndpointTests.GetSeveritySummary_UnknownStatus_ReturnsValidationProblem400 [2 ms]
+  Пройден SecureLab.Api.Tests.SearchSecurityTests.Search_TooLongQuery_Returns400WithQKey [2 ms]
+  Пройден SecureLab.Api.Tests.SearchSecurityTests.Search_WithoutSortBy_DefaultsToCreatedAtDescending [21 ms]
+  Пройден SecureLab.Api.Tests.IncidentCreateTests.A02_ServerManagedFieldsInBody_AreIgnored [26 ms]
+  Пройден SecureLab.Api.Tests.IncidentCreateTests.T02_DescriptionLongerThan4000_Returns400 [3 ms]
+  Пройден SecureLab.Api.Tests.IncidentCreateTests.T02_MissingFields_Returns400ForEachField [3 ms]
+  Пройден SecureLab.Api.Tests.SearchSecurityTests.T04_LegitimateApostrophe_OBrien [3 ms]
+  Пройден SecureLab.Api.Tests.IncidentCreateTests.T01_OccurredAtWithinFiveMinuteSkew_IsAccepted [4 ms]
+  Пройден SecureLab.Api.Tests.IncidentCreateTests.T02_SeveritySeven_IsRejectedByIsDefined_Returns400 [4 ms]
+  Пройден SecureLab.Api.Tests.IncidentCreateTests.T09_LowSeverity_ShortDescriptionIsAllowed [4 ms]
+  Пройден SecureLab.Api.Tests.SearchSecurityTests.T04_NormalSearch_Usb_ReturnsOnlyMatchingRecord [4 ms]
+  Пройден SecureLab.Api.Tests.IncidentEndpointTests.GetSeveritySummary_IsNoLongerBaseline501 [43 ms]
+  Пройден SecureLab.Api.Tests.IncidentCreateTests.T10_DescriptionRepeatingTitle_Rejected_ExtendedDescriptionAccepted [5 ms]
+  Пройден SecureLab.Api.Tests.IncidentEndpointTests.GetIncidentDetails_UnknownId_ReturnsProblemDetails404 [5 ms]
+  Пройден SecureLab.Api.Tests.IncidentEndpointTests.GetSeveritySummary_ReturnsAllLevelsInCriticalityOrder_WithBaselineSeedCounts [5 ms]
+  Пройден SecureLab.Api.Tests.SearchSecurityTests.Search_LikeMetacharacters_AreMatchedLiterally [59 ms]
+  Пройден SecureLab.Api.Tests.SearchSecurityTests.Search_SortByStatus_UsesWorkflowRank [61 ms]
+  Пройден SecureLab.Api.Tests.SearchSecurityTests.S02_ControlInput_DoesNotWidenResults [7 ms]
+  Пройден SecureLab.Api.Tests.SearchSecurityTests.T04_LegitimateApostrophe_FindsComputerClassIncident [7 ms]
+  Пройден SecureLab.Api.Tests.IncidentEndpointTests.GetIncidentDetails_DoesNotExposeOwnerUserIdOrEmail [76 ms]
+  Пройден SecureLab.Api.Tests.SearchSecurityTests.Search_SortBySeverity_UsesCriticalityRankNotAlphabet [8 ms]
+
+Тестовый запуск выполнен.
+Всего тестов: 45
+     Пройдено: 45

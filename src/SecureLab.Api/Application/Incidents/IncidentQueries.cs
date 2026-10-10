@@ -46,6 +46,75 @@ public sealed class IncidentQueries(SecureLabDbContext dbContext, ILogger<Incide
             .ToListAsync(cancellationToken);
     }
 
+    /// <summary>Максимальна кількість записів у відповіді пошуку.</summary>
+    public const int SearchLimit = 50;
+
+    /// <summary>Escape-символ для шаблонів ILIKE.</summary>
+    private const string LikeEscapeCharacter = "\\";
+
+    /// <summary>
+    /// Пошук за підрядком у Title і Description (контракт 2-A). Значення <paramref name="q"/>
+    /// ніколи не стає частиною SQL-тексту: EF Core передає шаблон окремим
+    /// параметром, а SQL-структуру (ORDER BY) обирає серверний <paramref name="sort"/>.
+    /// </summary>
+    public async Task<IReadOnlyList<IncidentSearchItemResponse>> SearchAsync(
+        string? q,
+        IncidentSearchSort sort,
+        CancellationToken cancellationToken)
+    {
+        IQueryable<Incident> query = dbContext.Incidents.AsNoTracking();
+
+        if (!string.IsNullOrEmpty(q))
+        {
+            // Literal substring: %, _ та сам escape-символ екрануються, тому
+            // "%" шукає знак відсотка, а не "будь-що".
+            var pattern = "%" + EscapeLikePattern(q) + "%";
+            query = query.Where(incident =>
+                EF.Functions.ILike(incident.Title, pattern, LikeEscapeCharacter)
+                || EF.Functions.ILike(incident.Description, pattern, LikeEscapeCharacter));
+        }
+
+        // Severity і Status зберігаються як текст, тому звичайний ORDER BY дав би
+        // лексикографічний порядок. Явне ранжування задає порядок контракту.
+        var ordered = sort switch
+        {
+            IncidentSearchSort.Severity => query
+                .OrderBy(incident =>
+                    incident.Severity == IncidentSeverity.Critical ? 0
+                    : incident.Severity == IncidentSeverity.High ? 1
+                    : incident.Severity == IncidentSeverity.Medium ? 2
+                    : 3)
+                .ThenByDescending(incident => incident.CreatedAtUtc),
+            IncidentSearchSort.Status => query
+                .OrderBy(incident =>
+                    incident.Status == IncidentStatus.New ? 0
+                    : incident.Status == IncidentStatus.Triaged ? 1
+                    : incident.Status == IncidentStatus.InProgress ? 2
+                    : incident.Status == IncidentStatus.Resolved ? 3
+                    : 4)
+                .ThenByDescending(incident => incident.CreatedAtUtc),
+            _ => query.OrderByDescending(incident => incident.CreatedAtUtc)
+        };
+
+        return await ordered
+            .ThenBy(incident => incident.Id)
+            .Take(SearchLimit)
+            .Select(incident => new IncidentSearchItemResponse(
+                incident.Id,
+                incident.Title,
+                incident.Description,
+                incident.Severity.ToString(),
+                incident.Status.ToString(),
+                incident.CreatedAtUtc))
+            .ToListAsync(cancellationToken);
+    }
+
+    private static string EscapeLikePattern(string value) =>
+        value
+            .Replace(LikeEscapeCharacter, LikeEscapeCharacter + LikeEscapeCharacter, StringComparison.Ordinal)
+            .Replace("%", LikeEscapeCharacter + "%", StringComparison.Ordinal)
+            .Replace("_", LikeEscapeCharacter + "_", StringComparison.Ordinal);
+
     /// <summary>
     /// Деталі одного інциденту за id. Повертає <c>null</c>, якщо ресурсу немає —
     /// саме цей результат endpoint перетворює на 404. Проєкція навмисно не

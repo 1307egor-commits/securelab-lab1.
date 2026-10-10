@@ -1,0 +1,14 @@
+# A-02 before fix (commit da672b8), 2026-10-10T13:29:48Z
+### GET /api/incidents?status=2
+[{"id":"6c0557df-43b0-4b25-b44b-78b72325ac7f","title":"Regression-382bb5185aae433a85c39869849203ed","severity":"Medium","status":"InProgress","occurredAtUtc":"2026-10-10T12:59:18.217048+00:00","createdAtUtc":"2026-10-10T13:29:18.217504+00:00"}]
+HTTP 200 application/json; charset=utf-8
+
+### GET /api/incidents?status=New,%20Triaged
+[{"id":"20000000-0000-0000-0000-000000000001","title":"Підозрілий лист із вкладенням","severity":"Medium","status":"Triaged","occurredAtUtc":"2026-08-01T08:30:00+00:00","createdAtUtc":"2026-08-01T09:00:00+00:00"},{"id":"6a2f3b00-e164-4fd0-b1c1-b5f76ad11ddd","title":"Regression-e7ae44628d7d4dbfb02a760eaf61e839","severity":"Medium","status":"Triaged","occurredAtUtc":"2026-10-10T12:59:18.198562+00:00","createdAtUtc":"2026-10-10T13:29:18.199054+00:00"}]
+HTTP 200 application
+### GET /api/incidents?status=7
+{"type":"https://tools.ietf.org/html/rfc9110#section-15.5.1","title":"One or more validation errors occurred.","status":400,"errors":{"status":["Невідоме значення статусу: '7'."]},"traceId":"00-ca384460f80e1dbe93a2c3c6aac8de56-7c2cb7dae7df5370-00"}
+HTTP 400 application/problem+json
+
+### GET /api/incidents?status=New
+[{"id":"20000000-0000-0000-0000-000000000004","title":"O'Brien classroom report","severity":"Low","status":"New","occurredAtUtc":"2026-08-03T09:00:00+00:00","createdAtUtc":"2026-08-03T09:00:00+00:00"},{"id":"20000000-0000-0000-0000-000000000005","title":"Перевірка USB навчальної мережі","severity":"Low","status":"New","occurredAtUtc":"2026-08-03T09:00:00+00:00","createdAtUtc":"2026-08-03T09:00:00+00:00"},{"id":"20000000-0000-0000-0000-000000000002","title":"Масове 

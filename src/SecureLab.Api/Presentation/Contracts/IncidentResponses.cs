@@ -55,3 +55,15 @@ public sealed record CreatedIncidentResponse(
     DateTimeOffset OccurredAtUtc,
     DateTimeOffset CreatedAtUtc,
     DateTimeOffset UpdatedAtUtc);
+
+/// <summary>
+/// Елемент результату GET /api/incidents/search. Форма збігається з відповіддю
+/// наданого scaffold, але це явний DTO, а не анонімна проєкція entity.
+/// </summary>
+public sealed record IncidentSearchItemResponse(
+    Guid Id,
+    string Title,
+    string Description,
+    string Severity,
+    string Status,
+    DateTimeOffset CreatedAtUtc);

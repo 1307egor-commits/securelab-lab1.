@@ -1,0 +1,11 @@
+# Фрагмент журналу EF Core (Database.Command=Information), fixed state. Значення параметрів не журналюються ('?').
+## пошук q=USB (без sortBy)
+Executed DbCommand (3ms) [Parameters=[@pattern='?', @pattern0='?', @p='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+WHERE i.title ILIKE @pattern ESCAPE '\' OR i.description ILIKE @pattern0 ESCAPE '\'
+ORDER BY i.created_at_utc DESC, i.id
+## sortBy=severity — порядок задає серверний CASE з allowlist, а не текст клієнта
+ORDER BY CASE
+WHEN i.severity = 'Critical' THEN 0
+WHEN i.severity = 'High' THEN 1
+WHEN i.severity = 'Medium' THEN 2
+ELSE 3

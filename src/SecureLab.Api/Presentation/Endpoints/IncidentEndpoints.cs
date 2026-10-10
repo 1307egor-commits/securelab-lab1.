@@ -1,3 +1,4 @@
+using SecureLab.Api.Application;
 using SecureLab.Api.Application.Incidents;
 using SecureLab.Api.Data;
 using SecureLab.Api.Data.Entities;
@@ -46,8 +47,8 @@ public static class IncidentEndpoints
 
     /// <summary>
     /// GET /api/incidents[?status=...]. Значення status контролює клієнт, тому
-    /// сервер перевіряє його через Enum.TryParse + Enum.IsDefined: невідоме
-    /// значення дає 400 Validation Problem Details.
+    /// сервер перевіряє його через Enum.TryParse + Enum.IsDefined + точну назву:
+    /// невідоме значення дає 400 Validation Problem Details.
     /// </summary>
     private static async Task<IResult> GetListAsync(
         string? status,
@@ -58,8 +59,11 @@ public static class IncidentEndpoints
 
         if (!string.IsNullOrWhiteSpace(status))
         {
+            // TryParse + IsDefined пропускають числові псевдоніми ("2") і списки
+            // ("New, Triaged"), тому додатково вимагаємо точну назву елемента.
             if (!Enum.TryParse<IncidentStatus>(status, ignoreCase: true, out var parsed)
-                || !Enum.IsDefined(parsed))
+                || !Enum.IsDefined(parsed)
+                || !EnumNames.IsExactName<IncidentStatus>(status))
             {
                 return Results.ValidationProblem(new Dictionary<string, string[]>
                 {

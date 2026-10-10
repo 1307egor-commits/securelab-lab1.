@@ -89,4 +89,130 @@ public sealed class SearchSecurityTests(SecureLabApiFactory factory) : IClassFix
         Assert.Empty(rows);
         Assert.Equal(Ids(baselineRows), Ids(rows));
     }
+    // ------------------------------------------- ILIKE метасимволи як літерали
+
+    [Fact]
+    public async Task Search_LikeMetacharacters_AreMatchedLiterally()
+    {
+        // Власний запис із %, _ і \ у title; title генерується один раз.
+        var title = $"Literal-{Guid.NewGuid():N} диск 100% заповнено_" + @"\journal";
+        using var client = factory.CreateClient();
+        using var created = await client.PostAsJsonAsync("/api/incidents", new
+        {
+            title,
+            description = "Перевірка буквального пошуку метасимволів ILIKE.",
+            severity = "Low",
+            occurredAtUtc = DateTimeOffset.UtcNow.AddMinutes(-5)
+        });
+        Assert.Equal(HttpStatusCode.Created, created.StatusCode);
+        var createdId = (await created.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("id").GetGuid();
+
+        foreach (var literal in new[] { "%", "_", "\\", "100%" })
+        {
+            var (status, rows) = await SearchAsync($"/api/incidents/search?q={Uri.EscapeDataString(literal)}");
+
+            Assert.Equal(HttpStatusCode.OK, status);
+            Assert.Contains(createdId, Ids(rows));
+            // Жоден запис без цього символу не повертається: % не означає "будь-що".
+            Assert.All(rows, row => Assert.True(
+                row.GetProperty("title").GetString()!.Contains(literal, StringComparison.Ordinal)
+                || row.GetProperty("description").GetString()!.Contains(literal, StringComparison.Ordinal),
+                $"Запис {row.GetProperty("id")} не містить '{literal}'"));
+        }
+
+        // Seed-записи без % не потрапляють у результат q=%.
+        var (_, percentRows) = await SearchAsync("/api/incidents/search?q=%25");
+        Assert.DoesNotContain(UsbIncidentId, Ids(percentRows));
+    }
+
+    // ------------------------------------------------------------ сортування
+
+    private static readonly string[] SeverityRank = ["Critical", "High", "Medium", "Low"];
+    private static readonly string[] StatusRank = ["New", "Triaged", "InProgress", "Resolved", "Closed"];
+
+    [Fact]
+    public async Task Search_WithoutSortBy_DefaultsToCreatedAtDescending()
+    {
+        var (status, rows) = await SearchAsync("/api/incidents/search");
+
+        Assert.Equal(HttpStatusCode.OK, status);
+        var created = rows.Select(row => row.GetProperty("createdAtUtc").GetDateTimeOffset()).ToList();
+        Assert.True(created.Count >= 5);
+        Assert.Equal(created.OrderByDescending(value => value), created);
+
+        var (emptyStatus, emptyRows) = await SearchAsync("/api/incidents/search?sortBy=");
+        Assert.Equal(HttpStatusCode.OK, emptyStatus);
+        Assert.Equal(Ids(rows), Ids(emptyRows));
+    }
+
+    [Fact]
+    public async Task Search_SortBySeverity_UsesCriticalityRankNotAlphabet()
+    {
+        var (status, rows) = await SearchAsync("/api/incidents/search?sortBy=severity");
+
+        Assert.Equal(HttpStatusCode.OK, status);
+        var ranks = rows.Select(row => Array.IndexOf(SeverityRank, row.GetProperty("severity").GetString())).ToList();
+        Assert.DoesNotContain(-1, ranks);
+        Assert.Equal(ranks.Order(), ranks);
+        // Лексикографічно було б High < Low < Medium; тут Medium має йти перед Low.
+        Assert.True(ranks.IndexOf(2) < ranks.IndexOf(3));
+    }
+
+    [Fact]
+    public async Task Search_SortByStatus_UsesWorkflowRank()
+    {
+        var (status, rows) = await SearchAsync("/api/incidents/search?sortBy=status");
+
+        Assert.Equal(HttpStatusCode.OK, status);
+        var ranks = rows.Select(row => Array.IndexOf(StatusRank, row.GetProperty("status").GetString())).ToList();
+        Assert.DoesNotContain(-1, ranks);
+        Assert.Equal(ranks.Order(), ranks);
+    }
+
+    // ---------------------------------------------------------------- T-05
+
+    [Theory]
+    [InlineData("title")]
+    [InlineData("created_at_utc DESC")]
+    [InlineData("Severity")]
+    public async Task T05_UnknownSortBy_Returns400WithSortByKey(string sortBy)
+    {
+        using var client = factory.CreateClient();
+        using var response = await client.GetAsync($"/api/incidents/search?q=USB&sortBy={Uri.EscapeDataString(sortBy)}");
+        var body = await response.Content.ReadAsStringAsync();
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        Assert.Equal("application/problem+json", response.Content.Headers.ContentType?.MediaType);
+        Assert.True(JsonDocument.Parse(body).RootElement.GetProperty("errors").TryGetProperty("sortBy", out _));
+        SafeErrors.AssertNoInternalDetails(body);
+    }
+
+    [Fact]
+    public async Task Search_TooLongQuery_Returns400WithQKey()
+    {
+        using var client = factory.CreateClient();
+        using var response = await client.GetAsync($"/api/incidents/search?q={new string('x', 201)}");
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        var errors = (await response.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("errors");
+        Assert.True(errors.TryGetProperty("q", out _));
+    }
+
+    // ---------------------------------------------------------------- A-02
+
+    [Theory]
+    [InlineData("2")]
+    [InlineData("New, Triaged")]
+    public async Task A02_ListStatusFilter_NumericOrCombinedAlias_Returns400(string status)
+    {
+        using var client = factory.CreateClient();
+        using var response = await client.GetAsync($"/api/incidents?status={Uri.EscapeDataString(status)}");
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        Assert.Equal("application/problem+json", response.Content.Headers.ContentType?.MediaType);
+
+        // Позитивний контроль: точна назва (без урахування регістру) працює.
+        using var valid = await client.GetAsync("/api/incidents?status=triaged");
+        Assert.Equal(HttpStatusCode.OK, valid.StatusCode);
+    }
 }

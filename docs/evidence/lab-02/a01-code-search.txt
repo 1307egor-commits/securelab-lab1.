@@ -1,0 +1,34 @@
+# A-01 code search on fixed state (2026-10-10T13:31:56Z)
+== grep -rn -E 'FromSqlRaw' src tests
+(no matches)
+== grep -rn -E 'ExecuteSqlRaw' src tests
+(no matches)
+== grep -rn -E 'FromSql' src tests
+(no matches)
+== grep -rn -E 'ExecuteSql' src tests
+(no matches)
+== grep -rn -E 'SqlQuery' src tests
+(no matches)
+== grep -rn -E '\$"SELECT' src tests
+(no matches)
+== grep -rn -E '+ query' src tests
+src/SecureLab.Api/Application/Incidents/IncidentQueries.cs:30:        IQueryable<Incident> query = dbContext.Incidents.AsNoTracking();
+src/SecureLab.Api/Application/Incidents/IncidentQueries.cs:34:            query = query.Where(incident => incident.Status == status);
+src/SecureLab.Api/Application/Incidents/IncidentQueries.cs:37:        return await query
+src/SecureLab.Api/Application/Incidents/IncidentQueries.cs:65:        IQueryable<Incident> query = dbContext.Incidents.AsNoTracking();
+src/SecureLab.Api/Application/Incidents/IncidentQueries.cs:72:            query = query.Where(incident =>
+src/SecureLab.Api/Application/Incidents/IncidentQueries.cs:81:            IncidentSearchSort.Severity => query
+src/SecureLab.Api/Application/Incidents/IncidentQueries.cs:88:            IncidentSearchSort.Status => query
+src/SecureLab.Api/Application/Incidents/IncidentQueries.cs:96:            _ => query.OrderByDescending(incident => incident.CreatedAtUtc)
+src/SecureLab.Api/Application/Incidents/IncidentQueries.cs:164:        IQueryable<Incident> query = dbContext.Incidents.AsNoTracking();
+src/SecureLab.Api/Application/Incidents/IncidentQueries.cs:168:            query = query.Where(incident => incident.Status == status);
+src/SecureLab.Api/Application/Incidents/IncidentQueries.cs:173:        var aggregated = await query
+src/SecureLab.Api/Presentation/Endpoints/IncidentEndpoints.cs:83:    /// некоректний id ще до обробника. Якщо query повертає null — це наявний
+tests/SecureLab.Api.Tests/SearchSecurityTests.cs:24:    private async Task<(HttpStatusCode Status, List<JsonElement> Rows)> SearchAsync(string query)
+== grep -rn -E 'ORDER BY' src tests
+src/SecureLab.Api/Application/Incidents/IncidentQueries.cs:58:    /// параметром, а SQL-структуру (ORDER BY) обирає серверний <paramref name="sort"/>.
+src/SecureLab.Api/Application/Incidents/IncidentQueries.cs:77:        // Severity і Status зберігаються як текст, тому звичайний ORDER BY дав би
+== grep -rn -E 'HasFilter' src tests
+src/SecureLab.Api/Data/Migrations/20261010132538_ActiveIncidentTitleIndex.Designer.cs:81:                        .HasFilter("status <> 'Closed'");
+src/SecureLab.Api/Data/Migrations/SecureLabDbContextModelSnapshot.cs:78:                        .HasFilter("status <> 'Closed'");
+src/SecureLab.Api/Data/SecureLabDbContext.cs:51:                .HasFilter("status <> 'Closed'");

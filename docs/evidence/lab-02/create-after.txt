@@ -1,0 +1,105 @@
+# captured 2026-10-10T13:32:07Z against http://localhost:5080 (local Development, artificial seed)
+### T-01 valid create
+POST /api/incidents
+body: {"title": "Підозрілий вхід до навчального VPN", "description": "Зафіксовано серію невдалих входів до навчального VPN з однієї адреси.", "severity": "Medium", "occurredAtUtc": "2026-10-10T13:02:07Z"}
+HTTP 201  Content-Type: application/json; charset=utf-8
+Location: /api/incidents/6be48e9d-0dbf-49b4-b3fc-0b55c6ed1573
+{"id":"6be48e9d-0dbf-49b4-b3fc-0b55c6ed1573","title":"Підозрілий вхід до навчального VPN","severity":"Medium","status":"New","occurredAtUtc":"2026-10-10T13:02:07+00:00","createdAtUtc":"2026-10-10T13:32:07.5977676+00:00","updatedAtUtc":"2026-10-10T13:32:07.5977676+00:00"}
+
+### T-03 duplicate active title
+POST /api/incidents
+body: {"title": "  Підозрілий вхід до навчального VPN  ", "description": "Зафіксовано серію невдалих входів до навчального VPN з однієї адреси.", "severity": "Medium", "occurredAtUtc": "2026-10-10T13:02:07Z"}
+HTTP 409  Content-Type: application/problem+json
+{"type":"https://tools.ietf.org/html/rfc9110#section-15.5.10","title":"Конфлікт із поточним станом","status":409,"detail":"Уже існує не закритий інцидент із таким самим заголовком.","traceId":"00-24389abfec7fca49f58a51aad09c1da4-147c12f84627c05e-00"}
+
+### T-03 control: other case
+POST /api/incidents
+body: {"title": "підозрілий вхід до навчального vpn", "description": "Зафіксовано серію невдалих входів до навчального VPN з однієї адреси.", "severity": "Low", "occurredAtUtc": "2026-10-10T13:02:07Z"}
+HTTP 201  Content-Type: application/json; charset=utf-8
+Location: /api/incidents/5f319df9-d929-4dbb-b604-e5c22eb74fb4
+{"id":"5f319df9-d929-4dbb-b604-e5c22eb74fb4","title":"підозрілий вхід до навчального vpn","severity":"Low","status":"New","occurredAtUtc":"2026-10-10T13:02:07+00:00","createdAtUtc":"2026-10-10T13:32:07.7796528+00:00","updatedAtUtc":"2026-10-10T13:32:07.7796528+00:00"}
+
+### T-02 severity 7
+POST /api/incidents
+body: {"title": "Severity seven", "description": "Зафіксовано серію невдалих входів до навчального VPN з однієї адреси.", "severity": "7", "occurredAtUtc": "2026-10-10T13:02:07Z"}
+HTTP 400  Content-Type: application/problem+json
+{"type":"https://tools.ietf.org/html/rfc9110#section-15.5.1","title":"Запит не відповідає контракту створення інциденту","status":400,"errors":{"severity":["Допустимі значення: Low, Medium, High, Critical."]},"traceId":"00-c55c26a6d20b03628c471cc531bfb69a-0f93285ed0fa48c3-00"}
+
+### T-02 empty title + unknown severity
+POST /api/incidents
+body: {"title": "   ", "description": "Зафіксовано серію невдалих входів до навчального VPN з однієї адреси.", "severity": "Extreme", "occurredAtUtc": "2026-10-10T13:02:07Z"}
+HTTP 400  Content-Type: application/problem+json
+{"type":"https://tools.ietf.org/html/rfc9110#section-15.5.1","title":"Запит не відповідає контракту створення інциденту","status":400,"errors":{"title":["Поле title є обов'язковим і не може складатися лише з пробілів."],"severity":["Допустимі значення: Low, Medium, High, Critical."]},"traceId":"00-dc0884bd3c3a34067f5740f6cac9d257-a74489dfe9cdfe92-00"}
+
+### T-02 missing occurredAtUtc
+POST /api/incidents
+body: {"title": "Без часу події", "description": "Зафіксовано серію невдалих входів до навчального VPN з однієї адреси.", "severity": "Low"}
+HTTP 400  Content-Type: application/problem+json
+{"type":"https://tools.ietf.org/html/rfc9110#section-15.5.1","title":"Запит не відповідає контракту створення інциденту","status":400,"errors":{"occurredAtUtc":["Поле occurredAtUtc є обов'язковим."]},"traceId":"00-8489dfed461a9e159df2fe2710cdc226-f8497076165a2925-00"}
+
+### T-02 occurredAtUtc +10 min
+POST /api/incidents
+body: {"title": "Подія з майбутнього", "description": "Зафіксовано серію невдалих входів до навчального VPN з однієї адреси.", "severity": "Low", "occurredAtUtc": "2026-10-10T13:42:07Z"}
+HTTP 400  Content-Type: application/problem+json
+{"type":"https://tools.ietf.org/html/rfc9110#section-15.5.1","title":"Запит не відповідає контракту створення інциденту","status":400,"errors":{"occurredAtUtc":["Поле occurredAtUtc не може випереджати поточний час сервера більш ніж на 5 хвилин."]},"traceId":"00-0c836dcd3c159d1d9b77402036a94d5f-021e07151cb48df8-00"}
+
+### T-02 malformed JSON
+POST /api/incidents
+body: { "title": 
+HTTP 400  Content-Type: application/problem+json
+{"type":"https://tools.ietf.org/html/rfc9110#section-15.5.1","title":"Bad Request","status":400,"traceId":"00-ffc66259fcaf10b6c6794b13c4f2889c-ba24b6ef3c1c015f-00"}
+
+### T-09 High, 39 chars after Trim
+POST /api/incidents
+body: {"title": "Cross-field 39", "description": "  aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa  ", "severity": "High", "occurredAtUtc": "2026-10-10T13:02:07Z"}
+HTTP 400  Content-Type: application/problem+json
+{"type":"https://tools.ietf.org/html/rfc9110#section-15.5.1","title":"Запит не відповідає контракту створення інциденту","status":400,"errors":{"description":["Для severity High або Critical поле description має містити щонайменше 40 символів (без початкових і кінцевих пробілів)."]},"traceId":"00-64bcefdc4f3e1f9ed1a15e4c7acc6873-577e82e2a9c5325f-00"}
+
+### T-09 High, 40 chars after Trim
+POST /api/incidents
+body: {"title": "Cross-field 40", "description": "  aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa  ", "severity": "High", "occurredAtUtc": "2026-10-10T13:02:07Z"}
+HTTP 201  Content-Type: application/json; charset=utf-8
+Location: /api/incidents/cced4447-c51a-4465-a30a-1dc889e66c7d
+{"id":"cced4447-c51a-4465-a30a-1dc889e66c7d","title":"Cross-field 40","severity":"High","status":"New","occurredAtUtc":"2026-10-10T13:02:07+00:00","createdAtUtc":"2026-10-10T13:32:07.8089437+00:00","updatedAtUtc":"2026-10-10T13:32:07.8089437+00:00"}
+
+### T-10 description repeats title
+POST /api/incidents
+body: {"title": "Втрата навчального ноутбука", "description": "втрата навчального ноутбука", "severity": "Low", "occurredAtUtc": "2026-10-10T13:02:07Z"}
+HTTP 400  Content-Type: application/problem+json
+{"type":"https://tools.ietf.org/html/rfc9110#section-15.5.1","title":"Запит не відповідає контракту створення інциденту","status":400,"errors":{"description":["Поле description не може дослівно повторювати title."]},"traceId":"00-5b93ad0d7c5a93e2141536a6015ff0f7-4094eeda493cddb8-00"}
+
+### T-10 control: extended description
+POST /api/incidents
+body: {"title": "Втрата навчального ноутбука", "description": "Втрата навчального ноутбука: залишено в аудиторії 214.", "severity": "Low", "occurredAtUtc": "2026-10-10T13:02:07Z"}
+HTTP 201  Content-Type: application/json; charset=utf-8
+Location: /api/incidents/fe5a642c-b0e2-4733-95f6-cbbaf92cc18e
+{"id":"fe5a642c-b0e2-4733-95f6-cbbaf92cc18e","title":"Втрата навчального ноутбука","severity":"Low","status":"New","occurredAtUtc":"2026-10-10T13:02:07+00:00","createdAtUtc":"2026-10-10T13:32:07.8141633+00:00","updatedAtUtc":"2026-10-10T13:32:07.8141633+00:00"}
+
+### A-02 severity 'Low, High'
+POST /api/incidents
+body: {"title": "Numeric alias", "description": "Зафіксовано серію невдалих входів до навчального VPN з однієї адреси.", "severity": "Low, High", "occurredAtUtc": "2026-10-10T13:02:07Z"}
+HTTP 400  Content-Type: application/problem+json
+{"type":"https://tools.ietf.org/html/rfc9110#section-15.5.1","title":"Запит не відповідає контракту створення інциденту","status":400,"errors":{"severity":["Допустимі значення: Low, Medium, High, Critical."]},"traceId":"00-49864e7e00d509aa1d53a6ee6d2deb52-f9ee73de563afc95-00"}
+
+### A-02 severity '2'
+POST /api/incidents
+body: {"title": "Numeric alias 2", "description": "Зафіксовано серію невдалих входів до навчального VPN з однієї адреси.", "severity": "2", "occurredAtUtc": "2026-10-10T13:02:07Z"}
+HTTP 400  Content-Type: application/problem+json
+{"type":"https://tools.ietf.org/html/rfc9110#section-15.5.1","title":"Запит не відповідає контракту створення інциденту","status":400,"errors":{"severity":["Допустимі значення: Low, Medium, High, Critical."]},"traceId":"00-9685c3352a56dcf2d0fedb2ee11c3a50-0ef30ad404c2f49e-00"}
+
+### A-02 overposting probe
+POST /api/incidents
+body: {"id": "66666666-6666-6666-6666-666666666666", "ownerUserId": "10000000-0000-0000-0000-000000000002", "status": "Closed", "createdAtUtc": "2000-01-01T00:00:00Z", "title": "Overposting probe", "description": "Body намагається задати власника, статус та audit-час.", "severity": "Low", "occurredAtUtc": "2026-10-10T13:02:07Z"}
+HTTP 201  Content-Type: application/json; charset=utf-8
+Location: /api/incidents/9f1dfe90-ebec-4176-8fe0-0a99642bfe8d
+{"id":"9f1dfe90-ebec-4176-8fe0-0a99642bfe8d","title":"Overposting probe","severity":"Low","status":"New","occurredAtUtc":"2026-10-10T13:02:07+00:00","createdAtUtc":"2026-10-10T13:32:07.820537+00:00","updatedAtUtc":"2026-10-10T13:32:07.820537+00:00"}
+
+### T-06 unknown id
+GET /api/incidents/99999999-9999-9999-9999-999999999999
+HTTP 404  Content-Type: application/problem+json
+{"type":"https://tools.ietf.org/html/rfc9110#section-15.5.5","title":"Інцидент не знайдено","status":404,"detail":"Інцидент з ідентифікатором 99999999-9999-9999-9999-999999999999 не знайдено.","traceId":"00-799fc6f08a2e2467fd7d5aef5b4619a3-a836af9799a13973-00"}
+
+### A-02 list filter numeric alias
+GET /api/incidents?status=2
+HTTP 400  Content-Type: application/problem+json
+{"type":"https://tools.ietf.org/html/rfc9110#section-15.5.1","title":"One or more validation errors occurred.","status":400,"errors":{"status":["Невідоме значення статусу: '2'."]},"traceId":"00-c9398fff5c3119812cee1745ade3df37-eb8c30c673338a67-00"}
